@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  # 1. PostgreSQL Database Service
+  postgres-db:
+    image: postgres:15-alpine
+    container_name: postgres-container
+    environment:
+      POSTGRES_DB: patientdb
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5001:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - internal  # <-- Connects the database to the 'internal' network
+
+  # 2. Spring Boot Patient Application Service
+  patient-service:
+    build: ./patient-service
+    container_name: patient-service-container
+    ports:
+      - "4000:4000"
+    depends_on:
+      - postgres-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-db:5432/patientdb
+    networks:
+      - internal  # <-- Connects the app to the 'internal' network
+
+# Define the custom networks at the bottom of the file
+networks:
+  internal:
+    driver: bridge  # 'bridge' is the standard driver for isolated container-to-container networks
+
+volumes:
+  postgres_data:

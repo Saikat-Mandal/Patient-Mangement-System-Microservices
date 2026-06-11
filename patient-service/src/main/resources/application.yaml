@@ -24,8 +24,8 @@ spring:
       mode: always
   datasource:
     url: jdbc:postgresql://localhost:5432/patientdb
-    username: test
-    password: test
+    username: admin
+    password: admin
   jpa:
     hibernate:
       ddl-auto: update
